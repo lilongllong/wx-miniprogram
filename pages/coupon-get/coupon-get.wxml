@@ -1,0 +1,32 @@
+<!--miniprogram/pages/coupon/coupon.wxml-->
+<template name="product-card">
+  <view class="product-card">
+    <view class="image" style="background-image: url({{url}}); padding-top: {{height / width * 100}}%;"></view>
+    <view class="footer">
+      <view class="title">{{title}}</view>
+      <view class="price">
+        <view class="price-unit">
+          <cover-image src="https://vfiles.gtimg.cn/vupload/202006/142caa1592038299684.png" />
+        </view>
+        <view class="price-numner">{{price}} 开心币</view>
+      </view>
+    </view>
+  </view>
+</template>
+<view class="page page--address page--with-footer">
+  <view class="container">
+    <view class="title">DP实现双列布局最优布局</view>
+    <view class="search-wrapper">
+      <input type='text' placeholder="请输入兑换码" value="{{addValue}}" bindinput="onAddValue" />
+      <button bindtap="getNewCoupon">增加商品</button>
+    </view>
+    <view class="content">
+      <view class="left">
+        <template is="product-card" wx:key="{{item.id}}" wx:for="{{left}}" data="{{...couponList[item]}}" />
+      </view>
+      <view class="right">
+        <template is="product-card" wx:key="{{item.id}}" wx:for="{{right}}" data="{{...couponList[item]}}" />
+      </view>
+    </view>
+  </view>
+</view>

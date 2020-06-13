@@ -1,0 +1,114 @@
+.page {
+  padding-top: 24px;
+  padding-right: 24px;
+  background-color: #fff;
+
+  .container {
+    padding: 12px;
+    .title {
+      text-align: center;
+      color: #07c160;
+    }
+    > .content {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 12px;
+      > .left {
+        flex: 1 1 0;
+        margin-right: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      > .right {
+        flex: 1 1 0;
+        margin-left: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+    }
+  }
+  .search-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-top: 12px;
+    button {
+      width: 120px;
+      margin: 0;
+    }
+    > input {
+      flex-basis: 0;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+  }
+}
+
+.product-card {
+  width: 160px;
+  background: #FFFFFF;
+  box-shadow: 0 6px 10px 0 rgba(0,0,0,0.06);
+  border-radius: 10.3px;
+  margin-bottom: 15px;
+  > .image {
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    width: 100%;
+  }
+  > .footer {
+    margin-top: 3px;
+    margin-bottom: 5px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding-left: 10px;
+    
+    > .title {
+      text-align: left;
+      font-family: PingFangSC-Medium;
+      font-size: 13.39px;
+      color: #222222;
+      width: 100%;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    > .price {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      > .price-unit {
+        background: #FFE317;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 3.5px;
+        width: 11.5px;
+        height: 11.5px;
+      }
+      > .price-number {
+        font-family: DIN-Bold;
+        font-size: 14.42px;
+        color: #000000;
+        letter-spacing: 0;
+      }
+    }
+  }
+  
+}
