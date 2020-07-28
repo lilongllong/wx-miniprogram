@@ -22,10 +22,12 @@
     </view>
     <view class="content">
       <view class="left">
-        <template is="product-card" wx:key="{{item.id}}" wx:for="{{left}}" data="{{...couponList[item]}}" />
+        <template is="product-card" wx:key="id" wx:for="{{left}}" data="{{...item}}" />
+        <view class="hidden-archer" id="left-archer" />
       </view>
       <view class="right">
-        <template is="product-card" wx:key="{{item.id}}" wx:for="{{right}}" data="{{...couponList[item]}}" />
+        <template is="product-card" wx:key="id" wx:for="{{right}}" data="{{...item}}" />
+        <view class="hidden-archer" id="right-archer" />
       </view>
     </view>
   </view>

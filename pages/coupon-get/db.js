@@ -1,11 +1,3 @@
-// import { abcRequest } from '@tencent/abcmouse-sdk-mp-tools';
-
-// const baseWebappUrl = 'https://h5.abcmouse.qq.com/webapp/json/';
-/**
- * 获取已经拥有的优惠卷
- * @param data 商品信息
- */
-
 const productionMap = {
   'horizontal': {
     width: 233,
@@ -29,6 +21,7 @@ const productionMap = {
 };
 
 export function getCouponById(data) {
+  // 获取初始化数据
   return new Promise((resolve, reject) => {
     const defaultData = [
       { 
@@ -52,28 +45,32 @@ export function getCouponById(data) {
   });
 };
 
-export function addCoupon(id) {
-  // 消费调这个的codekey
+export function addCoupon(id, limit = 10) {
+  // 获取新增数据
   return new Promise((resolve, reject) => {
-    const isValidate = Math.random();
-    if (isValidate <= 0.33) {
-      resolve({
-        id,
-        ...productionMap['vertical'],
-      });
-    } else if (isValidate <= 0.66) {
-      resolve({
-        id,
-        ...productionMap['horizontal'],
-      });
-    } else {
-      const height = 128 * Math.random() * 2;
-      resolve({ 
-        id,
-        width: 166,
-        height,
-        ...productionMap['custom']
-      });
+    const result = [];
+    for(let index = 0; index < limit; index++) {
+      const isValidate = Math.random();
+      if (isValidate <= 0.33) {
+        result.push({
+          id,
+          ...productionMap['vertical'],
+        });
+      } else if (isValidate <= 0.66) {
+        result.push({
+          id,
+          ...productionMap['horizontal'],
+        });
+      } else {
+        const height = 128 * Math.random() * 2;
+        result.push({ 
+          id,
+          width: 166,
+          height,
+          ...productionMap['custom']
+        });
+      }
     }
+    resolve(result);
   });
 }

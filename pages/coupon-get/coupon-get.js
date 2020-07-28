@@ -2,15 +2,59 @@
 import { getCouponById, addCoupon } from './db';
 // import { setGlobalData, getGlobalData } from '@tencent/abcmouse-sdk-mp-tools';
 
+function computeRatioHeight (data) {
+  // 计算当前元素相对于屏幕宽度的百分比的高度
+  // 移动短
+  const screenWidth = 375; // 设计稿的屏幕宽度
+  const itemHeight = data.height; //设计稿中的元素高度，也可以前端根据类型约定
+  return Math.ceil(screenWidth / itemHeight * 100);
+}
+
+function formatData(data) {
+  let diff = 0;
+  const left = [];
+  const right = [];
+  let i = 0;
+  while(i < data.length) {
+    if (diff <= 0) {
+      left.push(data[i]);
+      diff += computeRatioHeight(data[i]);
+    } else {
+      right.push(data[i]);
+      diff -= computeRatioHeight(data[i]);
+    }
+    i++;
+  }
+  return { left, right }
+}
+
+function getImgInfo(url) {
+  return new Promise((resolve, reject) => {
+    // 创建对象
+    const img = new Image();
+    // 改变图片的src
+    img.src = img_url;
+    // 判断是否有缓存
+    if (img.complete) {
+      resolve({ width: img.width, height: img.height });
+    } else {
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+      };
+    }
+  });
+}
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    couponList: [],
-    left: [],
-    right: [],
+    couponList: [], // 初始数据
+    left: [], // 左侧历史
+    right: [], // 右侧历史
+    diffValue: 0, // 左右列容器的高度差
     addValue: '',
   },
 
@@ -28,7 +72,7 @@ Page({
         this.setData({
           couponList: res || [],
         }, () => {
-          this.resetLayoutByDp();
+          this.resetLayoutByDp(res);
         });
       }).catch(() => {
         wx.showModal({
@@ -74,6 +118,13 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
+    // 在这里
+    // this.getNewCoupon();
+  },
+  /**
+   * 监听用户下拉刷新事件。
+   */
+  onPullDownRefresh: function () {
 
   },
 
@@ -90,13 +141,13 @@ Page({
     });
   },
   getNewCoupon: function () {
-    addCoupon(this.addValue).then((data) => {
+    addCoupon(this.addValue, 10).then((data) => {
       const { couponList } = this.data;
-      this.setData({ couponList: [data, ...couponList] }, () => {
-        this.resetLayoutByDp();
+      this.setData({ couponList: [...data, ...couponList] }, () => {
+        this.resetLayoutByDp(data);
       });
       wx.showToast({
-        title: "优惠卷添加成功",
+        title: "随机商品添加成功",
         icon: 'success',
         mask: true,
         complete: () => { this.setData({ addValue: '' }) }
@@ -119,12 +170,12 @@ Page({
     });
   },
 
-  resetLayoutByDp: function () {
-    const { couponList } = this.data;
-    const heights = couponList.map(item => item.height / item.width * 160 + 77);
-    const bagVolume = Math.round(heights.reduce((sum, curr) => sum + curr, 0) / 2);
+  resetLayoutByDp: function (couponList) {
+    const { left, right, diffValue } = this.data;
+    const heights = couponList.map(item => (item.height / item.width * 160 + 77));
+    const bagVolume = Math.round(heights.reduce((sum, curr) => sum + curr, diffValue) / 2);
     let dp = []
-// 基础状态 只考虑第一个图片的情况
+    // 基础状态 只考虑第一个图片的情况
     dp[0] = []
     for (let cap = 0; cap <= bagVolume; cap++) {
       dp[0].push(heights[0] > cap ? { max: 0, indexes: [] } : { max: heights[0], indexes: [0] }); 
@@ -162,15 +213,38 @@ Page({
         }
       }
     }
-    const left = dp[heights.length - 1][bagVolume].indexes;
+    const rightIndex = dp[heights.length - 1][bagVolume].indexes;
+    const nextDiff = heights.reduce((target, curr, index) => {
+      if (rightIndex.indexOf(index) === -1) {
+        target += heights[index];
+      } else {
+        target -= heights[index];
+      }
+      return target;
+    }, 0);
+    const rightData = rightIndex.map(item => couponList[item]);
+    const leftData = couponList.reduce((target, curr, index) => {
+      if (rightIndex.indexOf(index) === -1) {
+        target.push(couponList[index]);
+      }
+      return target;
+    }, []);
     this.setData({ 
-      left, 
-      right: heights.reduce((target, curr, index) => {
-        if (left.indexOf(index) === -1) {
-          target.push(index);
-        }
-        return target;
-      }, []) 
+      left: [...left, ...leftData],
+      right: [...right, ...rightData],
+      diffValue: diffValue + nextDiff,
+    }, () => {
+      // 更新左右间距差
+      const query = wx.createSelectorQuery();
+      query.select('#left-archer').boundingClientRect();
+      query.select('#right-archer').boundingClientRect();
+      const { diffValue } = this.data;
+      query.exec((res) => {
+        console.log(res[0].top - res[1].top, diffValue);
+        this.setData({
+          diffValue: res[0].top - res[1].top,
+        });
+      });
     });
   }
 })

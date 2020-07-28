@@ -15,6 +15,7 @@
       justify-content: space-between;
       align-items: flex-start;
       margin-top: 12px;
+      
       > .left {
         flex: 1 1 0;
         margin-right: 4px;
@@ -22,6 +23,11 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        > .hidden-archer {
+          height: 0;
+          width: 100%;
+          display: block;
+        }
       }
       > .right {
         flex: 1 1 0;
@@ -30,6 +36,11 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        > .hidden-archer {
+          height: 0;
+          width: 100%;
+          display: block;
+        }
       }
     }
   }
